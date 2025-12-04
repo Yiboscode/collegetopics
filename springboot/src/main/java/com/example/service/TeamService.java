@@ -104,6 +104,15 @@ public class TeamService {
      */
     public List<Team> selectAll(String teamName) {
         return teamMapper.selectAll(teamName);
+
+    /**
+     * 分页查询团队列表
+     */
+    public com.github.pagehelper.PageInfo<Team> selectPage(Team team, Integer pageNum, Integer pageSize) {
+        com.github.pagehelper.PageHelper.startPage(pageNum, pageSize);
+        List<Team> list = teamMapper.selectAll(team.getTeamName());
+        return com.github.pagehelper.PageInfo.of(list);
+    }
     }
 
     /**

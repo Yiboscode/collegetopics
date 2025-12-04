@@ -55,6 +55,17 @@ public class TeamController {
     public Result selectAll(@RequestParam(required = false) String teamName) {
         List<Team> list = teamService.selectAll(teamName);
         return Result.success(list);
+    /**
+     * 分页查询团队列表
+     */
+    @GetMapping("/selectPage")
+    public Result selectPage(Team team,
+                             @RequestParam(defaultValue = "1") Integer pageNum,
+                             @RequestParam(defaultValue = "10") Integer pageSize) {
+        com.github.pagehelper.PageInfo<Team> pageInfo = teamService.selectPage(team, pageNum, pageSize);
+        return Result.success(pageInfo);
+    }
+
     }
 
     /**
