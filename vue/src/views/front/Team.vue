@@ -351,15 +351,26 @@ export default {
     // 加载我的选题（用于创建团队）
     async loadMyTopics() {
       try {
-        // 获取当前用户的选题
-        const res = await request.get('/topic/selectAll')
-        // 过滤出当前用户的选题且没有团队的
-        const currentUser = JSON.parse(localStorage.getItem('xm-user') || '{}')
-        this.myTopics = res.data?.filter(topic => 
-          topic.studentId === currentUser.id && topic.status === '审核通过'
-        ) || []
+        // 直接获取当前用户的选题（使用/topic/my接口）
+        const res = await request.get('/topic/my', {
+          params: { pageNum: 1, pageSize: 100 }
+        })
+        // 过滤出审核通过且没有团队的选题
+        if (res.data && res.data.list) {
+          this.myTopics = res.data.list.filter(topic => 
+            topic.status === '审核通过'
+          ) || []
+        } else {
+          this.myTopics = []
+        }
+        
+        // 如果没有可用的选题，提示用户
+        if (this.myTopics.length === 0) {
+          console.log('没有找到审核通过的选题')
+        }
       } catch (error) {
         console.error('加载我的选题失败:', error)
+        this.myTopics = []
       }
     },
     // 打开创建团队对话框
