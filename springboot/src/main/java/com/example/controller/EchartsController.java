@@ -39,6 +39,31 @@ public class EchartsController {
     private TopicEvaluationService topicEvaluationService;
 
     @GetMapping("/pie")
+    /**
+     * 柱状图数据 - 项目分类统计
+     */
+    @GetMapping("/bar")
+    public Result bar() {
+        Map<String, Object> resultMap = new HashMap<>();
+        List<String> xList = new ArrayList<>();
+        List<Integer> yList = new ArrayList<>();
+        
+        List<Classify> classifys = classifyService.selectAll(null);
+        List<Project> projects = projectService.selectAll(null);
+        
+        for (Classify classify : classifys) {
+            long count = projects.stream()
+                .filter(x -> x.getClassifyId().equals(classify.getId()))
+                .count();
+            xList.add(classify.getName());
+            yList.add((int) count);
+        }
+        
+        resultMap.put("xAxis", xList);
+        resultMap.put("yAxis", yList);
+        return Result.success(resultMap);
+    }
+
     public Result pie() {
         List<Map<String, Object>> list = new ArrayList<>();
 
