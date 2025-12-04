@@ -1,0 +1,11 @@
+--- a/springboot/src/main/java/com/example/service/TeamService.java
++++ b/springboot/src/main/java/com/example/service/TeamService.java
+@@ -111,7 +111,8 @@ public class TeamService {
+      */
+     public com.github.pagehelper.PageInfo<Team> selectPage(Team team, Integer pageNum, Integer pageSize) {
+         com.github.pagehelper.PageHelper.startPage(pageNum, pageSize);
+-        List<Team> list = teamMapper.selectAll(team.getTeamName());
++        String teamName = (team != null && team.getTeamName() != null) ? team.getTeamName() : null;
++        List<Team> list = teamMapper.selectAll(teamName);
+         return com.github.pagehelper.PageInfo.of(list);
+     }

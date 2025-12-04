@@ -22,7 +22,7 @@ mybatis:
     map-underscore-to-camel-case: true
   mapper-locations: classpath:mapper/*.xml
 
-fileBaseUrl: https://collegetopics.cn
+fileBaseUrl: https://collegetopics.cn/api
 
 logging:
   level:
