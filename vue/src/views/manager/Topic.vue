@@ -95,7 +95,8 @@
         
         <el-form-item label="选题图片">
           <el-upload
-            :action="$baseUrl + '/files/upload'"
+            :action="baseUrl + '/files/upload'"
+            :headers="{ token: JSON.parse(localStorage.getItem('xm-user') || '{}').token }"
             :before-upload="beforeUpload"
             :on-success="handleFileUploadSuccess"
             :show-file-list="false"
@@ -223,6 +224,8 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
+
+const baseUrl = import.meta.env.VITE_BASE_URL
 
 // 响应式数据
 const searchParams = reactive({
