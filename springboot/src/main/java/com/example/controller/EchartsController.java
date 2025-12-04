@@ -1,6 +1,5 @@
 package com.example.controller;
 
-
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -26,7 +25,6 @@ import java.util.*;
 @RequestMapping("/echarts")
 public class EchartsController {
 
-
     @Resource
     public ProjectService projectService;
     @Resource
@@ -38,10 +36,6 @@ public class EchartsController {
     @Resource
     private TopicEvaluationService topicEvaluationService;
 
-    @GetMapping("/pie")
-    /**
-     * 柱状图数据 - 项目分类统计
-     */
     @GetMapping("/bar")
     public Result bar() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -64,22 +58,20 @@ public class EchartsController {
         return Result.success(resultMap);
     }
 
+    @GetMapping("/pie")
     public Result pie() {
         List<Map<String, Object>> list = new ArrayList<>();
-
-    //查询出所有分类信息
-    List<Classify> classifys = classifyService.selectAll(null);
-    //查出所有信息
-    List<Project> project = projectService.selectAll(null);
-         for (Classify classify : classifys) {
-        long count = project.stream().filter(x -> x.getClassifyId().equals(classify.getId())).count();
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", classify.getName());
-        map.put("value", count);
-        list.add(map);
-    }
+        List<Classify> classifys = classifyService.selectAll(null);
+        List<Project> project = projectService.selectAll(null);
+        for (Classify classify : classifys) {
+            long count = project.stream().filter(x -> x.getClassifyId().equals(classify.getId())).count();
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", classify.getName());
+            map.put("value", count);
+            list.add(map);
+        }
         return Result.success(list);
-}
+    }
 
     @GetMapping("line")
     public Result line() {
@@ -90,7 +82,6 @@ public class EchartsController {
         DateTime start = DateUtil.offsetDay(today, -6);
         List<String> xList = DateUtil.rangeToList(start, today, DateField.DAY_OF_YEAR).stream().map(DateUtil::formatDate).toList();
         List<Enroll> enroll = enrollService.selectAll(new Enroll());
-        // 按日期统计审核通过的记录数
         for (String day : xList) {
             long count = enroll.stream().filter(x -> x.getTime() != null && DateUtil.formatDate(DateUtil.parse(x.getTime())).startsWith(day) && "审核通过".equals(x.getStatus())).count();
             yList.add((int) count);
@@ -100,15 +91,11 @@ public class EchartsController {
         return Result.success(resultMap);
     }
 
-    /**
-     * 选题分类统计 - 饼图
-     */
     @GetMapping("/topicCategory")
     public Result topicCategory() {
         List<Map<String, Object>> list = new ArrayList<>();
         List<Topic> topics = topicService.selectAll(new Topic());
         
-        // 按分类统计选题数量
         Map<String, Long> categoryCount = new HashMap<>();
         for (Topic topic : topics) {
             String category = topic.getCategory();
@@ -125,15 +112,11 @@ public class EchartsController {
         return Result.success(list);
     }
 
-    /**
-     * 选题状态统计 - 饼图
-     */
     @GetMapping("/topicStatus")
     public Result topicStatus() {
         List<Map<String, Object>> list = new ArrayList<>();
         List<Topic> topics = topicService.selectAll(new Topic());
         
-        // 按状态统计选题数量
         Map<String, Long> statusCount = new HashMap<>();
         for (Topic topic : topics) {
             String status = topic.getStatus();
@@ -150,9 +133,6 @@ public class EchartsController {
         return Result.success(list);
     }
 
-    /**
-     * 选题提交趋势 - 折线图
-     */
     @GetMapping("/topicTrend")
     public Result topicTrend() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -163,7 +143,6 @@ public class EchartsController {
         List<String> xList = DateUtil.rangeToList(start, today, DateField.DAY_OF_YEAR).stream().map(DateUtil::formatDate).toList();
         List<Topic> topics = topicService.selectAll(new Topic());
         
-        // 按日期统计选题提交数
         for (String day : xList) {
             long count = topics.stream().filter(x -> x.getSubmitTime() != null && 
                 DateUtil.formatDate(DateUtil.parse(x.getSubmitTime())).equals(day)).count();
@@ -175,15 +154,11 @@ public class EchartsController {
         return Result.success(resultMap);
     }
 
-    /**
-     * 评价分数分布 - 柱状图
-     */
     @GetMapping("/evaluationScore")
     public Result evaluationScore() {
         Map<String, Object> resultMap = new HashMap<>();
         List<TopicEvaluation> evaluations = topicEvaluationService.selectAll(new TopicEvaluation());
         
-        // 分数区间
         List<String> scoreRanges = Arrays.asList("0-3分", "4-6分", "7-9分", "10-12分", "13-15分");
         List<Integer> counts = new ArrayList<>();
         
@@ -214,15 +189,11 @@ public class EchartsController {
         return Result.success(resultMap);
     }
 
-    /**
-     * 月度选题统计 - 柱状图
-     */
     @GetMapping("/monthlyTopic")
     public Result monthlyTopic() {
         Map<String, Object> resultMap = new HashMap<>();
         List<Topic> topics = topicService.selectAll(new Topic());
         
-        // 最近12个月
         List<String> months = new ArrayList<>();
         List<Integer> counts = new ArrayList<>();
         
@@ -237,7 +208,7 @@ public class EchartsController {
                 t.getSubmitTime().startsWith(monthStr)).count();
             counts.add((int) count);
             
-            cal = Calendar.getInstance(); // 重置
+            cal = Calendar.getInstance();
         }
         
         resultMap.put("xAxis", months);
@@ -245,9 +216,6 @@ public class EchartsController {
         return Result.success(resultMap);
     }
 
-    /**
-     * 综合数据统计
-     */
     @GetMapping("/topicStats")
     public Result topicStats() {
         Map<String, Object> stats = new HashMap<>();
@@ -255,13 +223,11 @@ public class EchartsController {
         List<Topic> topics = topicService.selectAll(new Topic());
         List<TopicEvaluation> evaluations = topicEvaluationService.selectAll(new TopicEvaluation());
         
-        // 基础统计
         stats.put("totalTopics", topics.size());
         stats.put("totalEvaluations", evaluations.size());
         stats.put("pendingTopics", topics.stream().filter(t -> "待评价".equals(t.getStatus())).count());
         stats.put("approvedTopics", topics.stream().filter(t -> "审核通过".equals(t.getStatus())).count());
         
-        // 平均分
         if (!evaluations.isEmpty()) {
             double avgScore = evaluations.stream()
                 .mapToDouble(e -> e.getTotalScore().doubleValue())
@@ -272,7 +238,6 @@ public class EchartsController {
             stats.put("averageScore", 0.0);
         }
         
-        // 本月新增
         String thisMonth = DateUtil.format(new Date(), "yyyy-MM");
         long thisMonthCount = topics.stream()
             .filter(t -> t.getSubmitTime() != null && t.getSubmitTime().startsWith(thisMonth))
@@ -281,5 +246,4 @@ public class EchartsController {
         
         return Result.success(stats);
     }
-
 }
