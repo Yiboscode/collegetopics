@@ -67,7 +67,6 @@ public class TeamController {
     }
 
     }
-
     /**
      * 根据ID查询团队详情
      */

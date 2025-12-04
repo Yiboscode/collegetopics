@@ -113,7 +113,6 @@ public class TeamService {
         List<Team> list = teamMapper.selectAll(team.getTeamName());
         return com.github.pagehelper.PageInfo.of(list);
     }
-    }
 
     /**
      * 根据ID查询团队详情
