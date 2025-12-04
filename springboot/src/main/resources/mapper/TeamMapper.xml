@@ -29,6 +29,8 @@
     <update id="updateById" parameterType="com.example.entity.Team">
         UPDATE team
         <set>
+            <if test="topicId != null">topic_id = #{topicId},</if>
+            <if test="leaderId != null">leader_id = #{leaderId},</if>
             <if test="teamName != null">team_name = #{teamName},</if>
             <if test="status != null">status = #{status},</if>
         </set>
