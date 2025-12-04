@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.TeamApplicationMapper">
+
+    <resultMap id="TeamApplicationResultMap" type="com.example.entity.TeamApplication">
+        <id column="id" property="id"/>
+        <result column="team_id" property="teamId"/>
+        <result column="applicant_id" property="applicantId"/>
+        <result column="message" property="message"/>
+        <result column="apply_time" property="applyTime"/>
+        <result column="status" property="status"/>
+        <result column="handle_time" property="handleTime"/>
+        <result column="reject_reason" property="rejectReason"/>
+        <result column="applicant_name" property="applicantName"/>
+        <result column="team_name" property="teamName"/>
+        <result column="topic_title" property="topicTitle"/>
+        <result column="avatar" property="avatar"/>
+    </resultMap>
+
+    <!-- 插入组队申请 -->
+    <insert id="insert" parameterType="com.example.entity.TeamApplication" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO team_application (team_id, applicant_id, message, apply_time, status)
+        VALUES (#{teamId}, #{applicantId}, #{message}, #{applyTime}, #{status})
+    </insert>
+
+    <!-- 删除组队申请 -->
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM team_application WHERE id = #{id}
+    </delete>
+
+    <!-- 更新组队申请 -->
+    <update id="updateById" parameterType="com.example.entity.TeamApplication">
+        UPDATE team_application
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="handleTime != null">handle_time = #{handleTime},</if>
+            <if test="rejectReason != null">reject_reason = #{rejectReason},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID查询组队申请 -->
+    <select id="selectById" parameterType="int" resultMap="TeamApplicationResultMap">
+        SELECT ta.*, 
+               u.name as applicant_name,
+               u.avatar as avatar,
+               t.team_name as team_name,
+               tp.title as topic_title
+        FROM team_application ta
+        LEFT JOIN user u ON ta.applicant_id = u.id
+        LEFT JOIN team t ON ta.team_id = t.id
+        LEFT JOIN topic tp ON t.topic_id = tp.id
+        WHERE ta.id = #{id}
+    </select>
+
+    <!-- 根据团队ID查询所有申请（队长查看） -->
+    <select id="selectByTeamId" parameterType="int" resultMap="TeamApplicationResultMap">
+        SELECT ta.*, 
+               u.name as applicant_name,
+               u.avatar as avatar,
+               t.team_name as team_name,
+               tp.title as topic_title
+        FROM team_application ta
+        LEFT JOIN user u ON ta.applicant_id = u.id
+        LEFT JOIN team t ON ta.team_id = t.id
+        LEFT JOIN topic tp ON t.topic_id = tp.id
+        WHERE ta.team_id = #{teamId}
+        ORDER BY ta.apply_time DESC
+    </select>
+
+    <!-- 根据申请人ID查询其所有申请 -->
+    <select id="selectByApplicantId" parameterType="int" resultMap="TeamApplicationResultMap">
+        SELECT ta.*, 
+               u.name as applicant_name,
+               u.avatar as avatar,
+               t.team_name as team_name,
+               tp.title as topic_title
+        FROM team_application ta
+        LEFT JOIN user u ON ta.applicant_id = u.id
+        LEFT JOIN team t ON ta.team_id = t.id
+        LEFT JOIN topic tp ON t.topic_id = tp.id
+        WHERE ta.applicant_id = #{applicantId}
+        ORDER BY ta.apply_time DESC
+    </select>
+
+    <!-- 查询所有申请 -->
+    <select id="selectAll" resultMap="TeamApplicationResultMap">
+        SELECT ta.*, 
+               u.name as applicant_name,
+               u.avatar as avatar,
+               t.team_name as team_name,
+               tp.title as topic_title
+        FROM team_application ta
+        LEFT JOIN user u ON ta.applicant_id = u.id
+        LEFT JOIN team t ON ta.team_id = t.id
+        LEFT JOIN topic tp ON t.topic_id = tp.id
+        <where>
+            <if test="status != null and status != ''">
+                AND ta.status = #{status}
+            </if>
+        </where>
+        ORDER BY ta.apply_time DESC
+    </select>
+
+    <!-- 检查是否已经申请过该团队 -->
+    <select id="checkApplicationExists" resultMap="TeamApplicationResultMap">
+        SELECT ta.*, 
+               u.name as applicant_name,
+               u.avatar as avatar,
+               t.team_name as team_name,
+               tp.title as topic_title
+        FROM team_application ta
+        LEFT JOIN user u ON ta.applicant_id = u.id
+        LEFT JOIN team t ON ta.team_id = t.id
+        LEFT JOIN topic tp ON t.topic_id = tp.id
+        WHERE ta.team_id = #{teamId} AND ta.applicant_id = #{applicantId} AND ta.status = 'pending'
+    </select>
+
+    <!-- 获取待处理申请数量 -->
+    <select id="getPendingApplicationCount" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM team_application WHERE team_id = #{teamId} AND status = 'pending'
+    </select>
+
+</mapper> 

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.EvaluateMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Evaluate">
+        select evaluate.*, user.name as userName, project.name as projectName, enroll.name as enrollName from evaluate
+        left join user on evaluate.user_id = user.id
+        left join project on evaluate.project_id = project.id
+        left join enroll on evaluate.enroll_id = enroll.id
+        <where>
+            <if test="id != null"> and evaluate.id = #{id}</if>
+            <if test="userId != null"> and evaluate.user_id = #{userId}</if>
+            <if test="userName != null"> and user.name like concat('%', #{userName}, '%')</if>
+            <if test="projectId != null"> and evaluate.project_id = #{projectId}</if>
+            <if test="projectName != null"> and project.name like concat('%', #{projectName}, '%')</if>
+            <if test="enrollId != null"> and evaluate.enroll_id = #{enrollId}</if>
+            <if test="enrollName != null"> and enroll.name like concat('%', #{enrollName}, '%')</if>
+            <if test="context != null"> and evaluate.context like concat('%', #{context}, '%')</if>
+            <if test="time != null"> and evaluate.time like concat('%', #{time}, '%')</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.Evaluate">
+        select * from `evaluate`
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from `evaluate`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Evaluate" useGeneratedKeys="true" keyProperty="id">
+        insert into `evaluate`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="enrollId != null">enroll_id,</if>
+            <if test="context != null">context,</if>
+            <if test="time != null">time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="enrollId != null">#{enrollId},</if>
+            <if test="context != null">#{context},</if>
+            <if test="time != null">#{time},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Evaluate">
+        update `evaluate`
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="projectId != null">
+                project_id = #{projectId},
+            </if>
+            <if test="enrollId != null">
+                enroll_id = #{enrollId},
+            </if>
+            <if test="context != null">
+                context = #{context},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+        </set>
+        where id = #{id} 
+    </update>
+
+</mapper>

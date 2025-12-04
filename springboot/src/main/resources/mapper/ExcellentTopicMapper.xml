@@ -1,0 +1,108 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ExcellentTopicMapper">
+
+    <select id="selectAll" resultType="com.example.entity.ExcellentTopic">
+        select * from `excellent_topic`
+        <where>
+            <if test="title != null and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="category != null and category != ''"> and category = #{category}</if>
+            <if test="year != null"> and year = #{year}</if>
+            <if test="awardInfo != null and awardInfo != ''"> and award_info like concat('%', #{awardInfo}, '%')</if>
+            <if test="tags != null and tags != ''"> and tags like concat('%', #{tags}, '%')</if>
+            <if test="imageUrl != null"> and image_url = #{imageUrl}</if>
+        </where>
+        order by year desc, id desc
+    </select>
+
+    <delete id="deleteById">
+        delete from `excellent_topic`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.ExcellentTopic" useGeneratedKeys="true">
+        insert into `excellent_topic`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="title != null">title,</if>
+            <if test="description != null">description,</if>
+            <if test="category != null">category,</if>
+            <if test="awardInfo != null">award_info,</if>
+            <if test="year != null">year,</if>
+            <if test="tags != null">tags,</if>
+            <if test="imageUrl != null">image_url,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="title != null">#{title},</if>
+            <if test="description != null">#{description},</if>
+            <if test="category != null">#{category},</if>
+            <if test="awardInfo != null">#{awardInfo},</if>
+            <if test="year != null">#{year},</if>
+            <if test="tags != null">#{tags},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.ExcellentTopic">
+        update `excellent_topic`
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            <if test="category != null">
+                category = #{category},
+            </if>
+            <if test="awardInfo != null">
+                award_info = #{awardInfo},
+            </if>
+            <if test="year != null">
+                year = #{year},
+            </if>
+            <if test="tags != null">
+                tags = #{tags},
+            </if>
+            <if test="imageUrl != null">
+                image_url = #{imageUrl},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectByCategory" resultType="com.example.entity.ExcellentTopic">
+        select * from `excellent_topic` where category = #{category} order by year desc, id desc
+    </select>
+
+    <select id="selectByYear" resultType="com.example.entity.ExcellentTopic">
+        select * from `excellent_topic` where year = #{year} order by id desc
+    </select>
+
+    <select id="selectAllCategories" resultType="java.lang.String">
+        select distinct category from `excellent_topic` where category is not null order by category
+    </select>
+
+    <select id="selectAllYears" resultType="java.lang.Integer">
+        select distinct year from `excellent_topic` where year is not null order by year desc
+    </select>
+
+    <select id="selectRecommend" resultType="com.example.entity.ExcellentTopic">
+        select * from `excellent_topic`
+        <where>
+            <if test="keywords != null">
+                and (title like concat('%', #{keywords}, '%') or tags like concat('%', #{keywords}, '%'))
+            </if>
+            <if test="category != null">
+                and category = #{category}
+            </if>
+        </where>
+        order by year desc, id desc
+        <if test="limit != null">
+            limit #{limit}
+        </if>
+    </select>
+
+</mapper> 

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.EnrollMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Enroll">
+        select enroll.*, project.title as projectName, user.name as userName from enroll
+        left join project on enroll.project_id = project.id
+        left join user on enroll.user_id = user.id
+        <where>
+            <if test="id != null"> and enroll.id = #{id}</if>
+            <if test="projectId != null"> and enroll.project_id = #{projectId}</if>
+            <if test="teacherId != null"> and enroll.teacher_id = #{teacherId}</if>
+            <if test="projectName != null"> and project.title like concat('%', #{projectName}, '%')</if>
+            <if test="userId != null"> and enroll.user_id = #{userId}</if>
+            <if test="userName != null"> and user.name like concat('%', #{userName}, '%')</if>
+            <if test="time != null"> and enroll.time like concat('%', #{time}, '%')</if>
+            <if test="status != null"> and enroll.status like concat('%', #{status}, '%')</if>
+            <if test="reason != null"> and enroll.reason like concat('%', #{reason}, '%')</if>
+            <if test="name != null"> and enroll.name like concat('%', #{name}, '%')</if>
+            <if test="phone != null"> and enroll.phone like concat('%', #{phone}, '%')</if>
+            <if test="content != null"> and enroll.content like concat('%', #{content}, '%')</if>
+        </where>
+        order by enroll.id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.Enroll">
+        select * from `enroll`
+        where id = #{id}
+    </select>
+
+    <select id="selectUserProject" resultType="java.lang.Integer">
+        select project_id from enroll where user_id = #{userId} and status = '审核通过'
+    </select>
+
+    <delete id="deleteById">
+        delete from `enroll`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Enroll" useGeneratedKeys="true" keyProperty="id">
+        insert into `enroll`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="time != null">time,</if>
+            <if test="status != null">status,</if>
+            <if test="reason != null">reason,</if>
+            <if test="name != null">name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="content != null">content,</if>
+            <if test="teacherName != null">teacher_name,</if>
+            <if test="teacherId != null">teacher_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="time != null">#{time},</if>
+            <if test="status != null">#{status},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="name != null">#{name},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="content != null">#{content},</if>
+            <if test="teacherName != null">#{teacherName},</if>
+            <if test="teacherId != null">#{teacherId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Enroll">
+        update `enroll`
+        <set>
+            <if test="projectId != null">
+                project_id = #{projectId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="reason != null">
+                reason = #{reason},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="content != null">
+                content = #{content},
+            </if>
+                 teacher_name = #{teacherName},
+                 teacher_id = #{teacherId},
+        </set>
+        where id = #{id} 
+    </update>
+
+</mapper>

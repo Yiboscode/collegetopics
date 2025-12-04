@@ -1,0 +1,39 @@
+# MySQL 数据文件
+mysql/data/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 环境变量
+.env
+.env.local
+
+# Node modules (如果有前端)
+node_modules/
+
+# 系统文件
+.DS_Store
+Thumbs.db

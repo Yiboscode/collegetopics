@@ -1,0 +1,156 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.TopicEvaluationMapper">
+
+    <select id="selectAll" resultType="com.example.entity.TopicEvaluation">
+        select te.*,
+               t.title as topicTitle,
+               u.name as studentName,
+               teacher.name as evaluatorName
+        from `topic_evaluation` te
+        left join `topic` t on te.topic_id = t.id
+        left join `user` u on t.student_id = u.id
+        left join `teacher` teacher on te.evaluator_id = teacher.id
+        <where>
+            <if test="topicId != null"> and te.topic_id = #{topicId}</if>
+            <if test="evaluatorId != null"> and te.evaluator_id = #{evaluatorId}</if>
+            <if test="status != null and status != ''"> and te.status = #{status}</if>
+            <if test="topicTitle != null and topicTitle != ''"> and t.title like concat('%', #{topicTitle}, '%')</if>
+            <if test="evaluatorName != null and evaluatorName != ''"> and teacher.name like concat('%', #{evaluatorName}, '%')</if>
+        </where>
+        order by te.id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.TopicEvaluation">
+        select te.*,
+               t.title as topicTitle,
+               u.name as studentName,
+               teacher.name as evaluatorName
+        from `topic_evaluation` te
+        left join `topic` t on te.topic_id = t.id
+        left join `user` u on t.student_id = u.id
+        left join `teacher` teacher on te.evaluator_id = teacher.id
+        where te.id = #{id}
+    </select>
+
+    <select id="selectByTopicId" resultType="com.example.entity.TopicEvaluation">
+        select te.*,
+               t.title as topicTitle,
+               u.name as studentName,
+               teacher.name as evaluatorName
+        from `topic_evaluation` te
+        left join `topic` t on te.topic_id = t.id
+        left join `user` u on t.student_id = u.id
+        left join `teacher` teacher on te.evaluator_id = teacher.id
+        where te.topic_id = #{topicId}
+        limit 1
+    </select>
+
+    <select id="selectByTopicAndEvaluator" resultType="com.example.entity.TopicEvaluation">
+        select te.*,
+               t.title as topicTitle,
+               u.name as studentName,
+               teacher.name as evaluatorName
+        from `topic_evaluation` te
+        left join `topic` t on te.topic_id = t.id
+        left join `user` u on t.student_id = u.id
+        left join `teacher` teacher on te.evaluator_id = teacher.id
+        where te.topic_id = #{topicId} and te.evaluator_id = #{evaluatorId}
+        limit 1
+    </select>
+
+    <delete id="deleteById">
+        delete from `topic_evaluation`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.TopicEvaluation" useGeneratedKeys="true">
+        insert into `topic_evaluation`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="topicId != null">topic_id,</if>
+            <if test="evaluatorId != null">evaluator_id,</if>
+            <if test="innovationScore != null">innovation_score,</if>
+            <if test="feasibilityScore != null">feasibility_score,</if>
+            <if test="significanceScore != null">significance_score,</if>
+            <if test="totalScore != null">total_score,</if>
+            <if test="suggestions != null">suggestions,</if>
+            <if test="status != null">status,</if>
+            <if test="evaluationTime != null">evaluation_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="topicId != null">#{topicId},</if>
+            <if test="evaluatorId != null">#{evaluatorId},</if>
+            <if test="innovationScore != null">#{innovationScore},</if>
+            <if test="feasibilityScore != null">#{feasibilityScore},</if>
+            <if test="significanceScore != null">#{significanceScore},</if>
+            <if test="totalScore != null">#{totalScore},</if>
+            <if test="suggestions != null">#{suggestions},</if>
+            <if test="status != null">#{status},</if>
+            <if test="evaluationTime != null">#{evaluationTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.TopicEvaluation">
+        update `topic_evaluation`
+        <set>
+            <if test="topicId != null">
+                topic_id = #{topicId},
+            </if>
+            <if test="evaluatorId != null">
+                evaluator_id = #{evaluatorId},
+            </if>
+            <if test="innovationScore != null">
+                innovation_score = #{innovationScore},
+            </if>
+            <if test="feasibilityScore != null">
+                feasibility_score = #{feasibilityScore},
+            </if>
+            <if test="significanceScore != null">
+                significance_score = #{significanceScore},
+            </if>
+            <if test="totalScore != null">
+                total_score = #{totalScore},
+            </if>
+            <if test="suggestions != null">
+                suggestions = #{suggestions},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="evaluationTime != null">
+                evaluation_time = #{evaluationTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectMyEvaluations" resultType="com.example.entity.TopicEvaluation">
+        select te.*,
+               t.title as topicTitle,
+               u.name as studentName,
+               teacher.name as evaluatorName
+        from `topic_evaluation` te
+        left join `topic` t on te.topic_id = t.id
+        left join `user` u on t.student_id = u.id
+        left join `teacher` teacher on te.evaluator_id = teacher.id
+        <where>
+            <if test="evaluatorId != null">
+                te.evaluator_id = #{evaluatorId}
+            </if>
+            <if test="topicTitle != null and topicTitle != ''">
+                AND t.title LIKE CONCAT('%', #{topicTitle}, '%')
+            </if>
+            <if test="studentName != null and studentName != ''">
+                AND u.name LIKE CONCAT('%', #{studentName}, '%')
+            </if>
+            <if test="evaluatorName != null and evaluatorName != ''">
+                AND teacher.name LIKE CONCAT('%', #{evaluatorName}, '%')
+            </if>
+        </where>
+        order by te.id desc
+    </select>
+
+</mapper> 

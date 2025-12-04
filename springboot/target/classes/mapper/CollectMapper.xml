@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CollectMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Collect">
+        select collect.*, project.title as projectTitle, project.img as projectImg, user.name as userName from collect
+        left join project on collect.project_id = project.id
+        left join user on collect.user_id = user.id
+        <where>
+            <if test="id != null"> and collect.id = #{id}</if>
+            <if test="projectId != null"> and collect.project_id = #{projectId}</if>
+            <if test="projectTitle != null"> and project.title like concat('%', #{projectTitle}, '%')</if>
+            <if test="userId != null"> and collect.user_id like concat('%', #{userId}, '%')</if>
+            <if test="userName != null"> and user.name like concat('%', #{userName}, '%')</if>
+            <if test="time != null"> and collect.time like concat('%', #{time}, '%')</if>
+        </where>
+        order by collect.id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.Collect">
+        select * from `collect`
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from `collect`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Collect" useGeneratedKeys="true" keyProperty="id">
+        insert into `collect`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="time != null">time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="time != null">#{time},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Collect">
+        update `collect`
+        <set>
+            <if test="projectId != null">
+                project_id = #{projectId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+        </set>
+        where id = #{id} 
+    </update>
+
+</mapper>

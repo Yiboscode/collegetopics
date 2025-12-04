@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CompetitionMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Competition">
+        select competition.* from competition
+        <where>
+            <if test="id != null"> and competition.id = #{id}</if>
+            <if test="title != null"> and competition.title like concat('%', #{title}, '%')</if>
+            <if test="introduce != null"> and competition.introduce like concat('%', #{introduce}, '%')</if>
+            <if test="content != null"> and competition.content like concat('%', #{content}, '%')</if>
+            <if test="time != null"> and competition.time like concat('%', #{time}, '%')</if>
+            <if test="views != null"> and competition.views = #{views}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="selectById" resultType="com.example.entity.Competition">
+        select * from `competition`
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        delete from `competition`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.Competition" useGeneratedKeys="true" keyProperty="id">
+        insert into `competition`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="title != null">title,</if>
+            <if test="introduce != null">introduce,</if>
+            <if test="content != null">content,</if>
+            <if test="time != null">time,</if>
+            <if test="views != null">views,</if>
+            <if test="img != null">img,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="title != null">#{title},</if>
+            <if test="introduce != null">#{introduce},</if>
+            <if test="content != null">#{content},</if>
+            <if test="time != null">#{time},</if>
+            <if test="views != null">#{views},</if>
+            <if test="img != null">#{img},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.Competition">
+        update `competition`
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="introduce != null">
+                introduce = #{introduce},
+            </if>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="views != null">
+                views = #{views},
+            </if>
+            <if test="img != null">
+                img = #{img},
+            </if>
+        </set>
+        where id = #{id} 
+    </update>
+
+</mapper>

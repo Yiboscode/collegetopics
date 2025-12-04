@@ -1,0 +1,151 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.InnovationEvaluationMapper">
+
+    <select id="selectAll" resultType="com.example.entity.InnovationEvaluation">
+        select ie.*, u.name as studentName, COALESCE(t.name, a.name) as evaluatorName
+        from `innovation_evaluation` ie
+        left join user u on ie.student_id = u.id
+        left join teacher t on ie.evaluator_id = t.id
+        left join admin a on ie.evaluator_id = a.id
+        <where>
+            <if test="studentId != null"> and ie.student_id = #{studentId}</if>
+            <if test="evaluatorId != null"> and ie.evaluator_id = #{evaluatorId}</if>
+            <if test="studentName != null"> and u.name like concat('%', #{studentName}, '%')</if>
+        </where>
+        order by ie.id desc
+    </select>
+
+    <delete id="deleteById">
+        delete from `innovation_evaluation`
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.example.entity.InnovationEvaluation" useGeneratedKeys="true">
+        insert into `innovation_evaluation`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="studentId != null">student_id,</if>
+            <if test="evaluatorId != null">evaluator_id,</if>
+
+            <if test="knowledgeSeeking != null">knowledge_seeking,</if>
+            <if test="processingAbility != null">processing_ability,</if>
+            <if test="understandingAbility != null">understanding_ability,</if>
+            <if test="selfLearningAbility != null">self_learning_ability,</if>
+            <if test="innovationDesire != null">innovation_desire,</if>
+            <if test="innovationInterest != null">innovation_interest,</if>
+            <if test="innovationMotivation != null">innovation_motivation,</if>
+            <if test="innovationSpirit != null">innovation_spirit,</if>
+            <if test="cooperationAbility != null">cooperation_ability,</if>
+            <if test="handsOnAbility != null">hands_on_ability,</if>
+            <if test="expressionAbility != null">expression_ability,</if>
+            <if test="researchAbility != null">research_ability,</if>
+            <if test="totalScore != null">total_score,</if>
+            <if test="evaluationTime != null">evaluation_time,</if>
+            <if test="comments != null">comments,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="studentId != null">#{studentId},</if>
+            <if test="evaluatorId != null">#{evaluatorId},</if>
+
+            <if test="knowledgeSeeking != null">#{knowledgeSeeking},</if>
+            <if test="processingAbility != null">#{processingAbility},</if>
+            <if test="understandingAbility != null">#{understandingAbility},</if>
+            <if test="selfLearningAbility != null">#{selfLearningAbility},</if>
+            <if test="innovationDesire != null">#{innovationDesire},</if>
+            <if test="innovationInterest != null">#{innovationInterest},</if>
+            <if test="innovationMotivation != null">#{innovationMotivation},</if>
+            <if test="innovationSpirit != null">#{innovationSpirit},</if>
+            <if test="cooperationAbility != null">#{cooperationAbility},</if>
+            <if test="handsOnAbility != null">#{handsOnAbility},</if>
+            <if test="expressionAbility != null">#{expressionAbility},</if>
+            <if test="researchAbility != null">#{researchAbility},</if>
+            <if test="totalScore != null">#{totalScore},</if>
+            <if test="evaluationTime != null">#{evaluationTime},</if>
+            <if test="comments != null">#{comments},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.example.entity.InnovationEvaluation">
+        update `innovation_evaluation`
+        <set>
+            <if test="studentId != null">
+                student_id = #{studentId},
+            </if>
+            <if test="evaluatorId != null">
+                evaluator_id = #{evaluatorId},
+            </if>
+
+            <if test="knowledgeSeeking != null">
+                knowledge_seeking = #{knowledgeSeeking},
+            </if>
+            <if test="processingAbility != null">
+                processing_ability = #{processingAbility},
+            </if>
+            <if test="understandingAbility != null">
+                understanding_ability = #{understandingAbility},
+            </if>
+            <if test="selfLearningAbility != null">
+                self_learning_ability = #{selfLearningAbility},
+            </if>
+            <if test="innovationDesire != null">
+                innovation_desire = #{innovationDesire},
+            </if>
+            <if test="innovationInterest != null">
+                innovation_interest = #{innovationInterest},
+            </if>
+            <if test="innovationMotivation != null">
+                innovation_motivation = #{innovationMotivation},
+            </if>
+            <if test="innovationSpirit != null">
+                innovation_spirit = #{innovationSpirit},
+            </if>
+            <if test="cooperationAbility != null">
+                cooperation_ability = #{cooperationAbility},
+            </if>
+            <if test="handsOnAbility != null">
+                hands_on_ability = #{handsOnAbility},
+            </if>
+            <if test="expressionAbility != null">
+                expression_ability = #{expressionAbility},
+            </if>
+            <if test="researchAbility != null">
+                research_ability = #{researchAbility},
+            </if>
+            <if test="totalScore != null">
+                total_score = #{totalScore},
+            </if>
+            <if test="evaluationTime != null">
+                evaluation_time = #{evaluationTime},
+            </if>
+            <if test="comments != null">
+                comments = #{comments},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectMyEvaluations" resultType="com.example.entity.InnovationEvaluation">
+        select ie.*,
+               u.name as studentName,
+               teacher.name as evaluatorName
+        from `innovation_evaluation` ie
+        left join `user` u on ie.student_id = u.id
+        left join `teacher` teacher on ie.evaluator_id = teacher.id
+        <where>
+            <if test="evaluatorId != null">
+                ie.evaluator_id = #{evaluatorId}
+            </if>
+            <if test="studentName != null and studentName != ''">
+                AND u.name LIKE CONCAT('%', #{studentName}, '%')
+            </if>
+            <if test="evaluatorName != null and evaluatorName != ''">
+                AND teacher.name LIKE CONCAT('%', #{evaluatorName}, '%')
+            </if>
+        </where>
+        order by ie.id desc
+    </select>
+
+</mapper> 
