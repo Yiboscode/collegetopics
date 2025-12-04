@@ -371,6 +371,15 @@ export default {
       }
       this.showCreateDialog = true
     },
+    // 打开创建团队对话框
+    async openCreateDialog() {
+      await this.loadMyTopics()
+      if (this.myTopics.length === 0) {
+        ElMessage.warning('您还没有审核通过的选题，请先提交选题！')
+        return
+      }
+      this.showCreateDialog = true
+    },
     // 创建团队
     async createTeam() {
       this.$refs.createFormRef.validate(async (valid) => {
