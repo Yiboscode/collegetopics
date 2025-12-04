@@ -35,7 +35,7 @@
         </template>
         <div class="create-team-content">
           <p>还没有团队？立即创建属于你的团队吧！</p>
-          <el-button type="primary" @click="showCreateDialog = true">创建团队</el-button>
+          <el-button type="primary" @click="openCreateDialog">创建团队</el-button>
         </div>
       </el-card>
 
@@ -361,6 +361,15 @@ export default {
       } catch (error) {
         console.error('加载我的选题失败:', error)
       }
+    },
+    // 打开创建团队对话框
+    async openCreateDialog() {
+      await this.loadMyTopics()
+      if (this.myTopics.length === 0) {
+        ElMessage.warning('您还没有审核通过的选题，请先提交选题！')
+        return
+      }
+      this.showCreateDialog = true
     },
     // 创建团队
     async createTeam() {
